@@ -1,0 +1,98 @@
+version: '3.5'
+services:
+  db:
+    build: ./docker/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      # 初期データを投入するSQLが格納されているdir
+      - mysql_init:/docker-entrypoint-initdb.d
+      # 永続化するときにマウントするdir
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: tech
+      MYSQL_PASSWORD: tech
+      TZ: Asia/Tokyo
+  redis:
+    image: "redis:latest"
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis:/data
+  php:
+    build: ./docker/php
+    ports:
+      - '127.0.0.1:9000:9000'
+    volumes:
+      - app:/var/www/app
+    environment:
+      TZ: Asia/Tokyo
+    depends_on:
+      - db
+  node:
+    build: ./docker/node
+    volumes:
+      - app:/home/tech/workspace
+    environment:
+      TZ: Asia/Tokyo
+    tty: true
+    depends_on:
+      - php
+  nginx:
+    build: ./docker/nginx
+    volumes:
+      - app:/var/www/app
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      - php
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      STAGE: 'local'
+      DOMAINS: >-
+        localhost -> http://nginx:8000
+      # FORCE_RENEW: 'true'
+    volumes:
+      - ssl:/var/lib/https-portal
+    depends_on:
+      - db
+      - mail
+      - nginx
+  mail:
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+volumes:
+  ssl:
+    driver_opts:
+      type: none
+      device: $PWD/ssl
+      o: bind
+  mysql_init:
+    driver_opts:
+      type: none
+      device: $PWD/db/mysql_init
+      o: bind
+  mysql_data:
+    driver_opts:
+      type: none
+      device: $PWD/db/mysql_data
+      o: bind
+  app:
+    driver_opts:
+      type: none
+      device: $PWD/app
+      o: bind
+  redis:
+    driver_opts:
+      type: none
+      device: $PWD/redis/data
+      o: bind

@@ -1,0 +1,16 @@
+ssl/*
+!.gitkeep
+
+db/mysql_data/*
+!.gitkeep
+
+logs/*
+!.gitkeep
+
+redis/data/*
+!.gitkeep
+
+.project
+.buildpath
+.settings/*
+
