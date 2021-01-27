@@ -1,19 +1,3 @@
-# FROM php:7.4.12-fpm-alpine3.12 AS build-env
-
-# RUN apk upgrade --update && apk --no-cache add icu-dev autoconf make g++ gcc curl && \
-#     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-# WORKDIR /var/www
-# RUN composer create-project laravel/laravel --prefer-dist laravel8
-
-# FROM php:7.4.12-fpm-alpine3.12 
-
-# この辺で下記と同じ処理
-
-# COPY --from=build-env /usr/local/bin/composer /usr/local/bin/composer
-# COPY --from=build-env /var/www /var/www
-# これで容量が小さくなるかわからないけどやってみた
-# 20MBぐらいしか変わらなかった・・・
-
 FROM php:7.4.12-fpm-alpine3.12 
 LABEL maintainer "seiyu-nico <yuseiishii141+docker@gmail.com>"
 
@@ -31,8 +15,10 @@ RUN apk upgrade --update && \
     docker-php-ext-enable redis && \
     apk del autoconf g++ libtool make && \
     rm -rf /tmp/* && \
-    apk upgrade --update && apk --no-cache add icu-dev autoconf make g++ gcc curl && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    apk upgrade --update && apk --no-cache add icu-dev autoconf make g++ gcc curl
+    
+COPY --from=composer:2.0 /usr/bin/composer /usr/bin/composer
+
 WORKDIR /var/www/app
 RUN composer create-project "laravel/laravel=6.*" --prefer-dist .
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf
