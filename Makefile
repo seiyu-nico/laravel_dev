@@ -1,7 +1,7 @@
 .PHONY: init
 init:
-		rm -rf ./app/*
-		rm -rf ./app/.gitkeep
+		rm -rf ./src/*
+		rm -rf ./src/.gitkeep
 		rm -rf ./db/mysql_data/*
 		rm -rf ./ssl/*
 		rm -rf ./logs/*
