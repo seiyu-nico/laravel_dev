@@ -87,10 +87,10 @@ volumes:
       type: none
       device: $PWD/db/mysql_data
       o: bind
-  app:
+  src:
     driver_opts:
       type: none
-      device: $PWD/app
+      device: $PWD/src
       o: bind
   redis:
     driver_opts:
