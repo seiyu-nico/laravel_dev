@@ -26,7 +26,7 @@ services:
     ports:
       - '127.0.0.1:9000:9000'
     volumes:
-      - app:/var/www/app
+      - src:/var/www/src
     environment:
       TZ: Asia/Tokyo
     depends_on:
@@ -34,7 +34,7 @@ services:
   node:
     build: ./docker/node
     volumes:
-      - app:/home/tech/workspace
+      - src:/home/tech/workspace
     environment:
       TZ: Asia/Tokyo
     tty: true
@@ -43,7 +43,7 @@ services:
   nginx:
     build: ./docker/nginx
     volumes:
-      - app:/var/www/app
+      - src:/var/www/src
     environment:
       TZ: Asia/Tokyo
     ports:
