@@ -19,7 +19,7 @@ RUN apk upgrade --update && \
     
 COPY --from=composer:2.0 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/app
+WORKDIR /var/www/src
 RUN composer create-project "laravel/laravel=6.*" --prefer-dist .
 COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 
