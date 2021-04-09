@@ -10,6 +10,7 @@ services:
       # 永続化するときにマウントするdir
       - mysql_data:/var/lib/mysql
     environment:
+      MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: tech
       MYSQL_PASSWORD: tech
